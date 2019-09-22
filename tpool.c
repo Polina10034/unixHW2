@@ -1,7 +1,7 @@
 #include "tpool.h"
 
 
-int ThreadPoolInit(struct ThreadPoolManager* t, int n){
+int ThreadPoolInit(ThreadPoolManager* t, int n){
     if (n < 0){
         n = 0;
     }
@@ -9,13 +9,13 @@ int ThreadPoolInit(struct ThreadPoolManager* t, int n){
 
 }
 
-void ThreadPoolDestroy(struct ThreadPoolManager* t){}
+void ThreadPoolDestroy(ThreadPoolManager* t){0}
 
-int ThreadPoolInsertTask(struct ThreadPoolManager* t, struct Task* task){}
+int ThreadPoolInsertTask(ThreadPoolManager* t, task* task){}
 
-static void* threadPoolCheck(void* threadPool);
+static void* threadPoolCheck(void* threadPool){}
 
-static int taskQueue_init(struct qTask* q){
+static int taskQueue_init(qTask* q){
     q->lenght = 0;
     q->start = NULL;
     q->end = NULL;
@@ -24,7 +24,7 @@ static int taskQueue_init(struct qTask* q){
 
     return 0;
 }
-static void taskQueue_clear(struct qTask* q){
+static void taskQueue_clear(qTask* q){
     while(q->lenght){
         free(taskQueue_pull(q));
     }
@@ -33,13 +33,13 @@ static void taskQueue_clear(struct qTask* q){
     q->end = NULL;
 }
 
-static void taskQueue_push(struct qTask* q, struct task* task){
+static void taskQueue_push( qTask* q,  task* task){
     pthread_mutex_lock()
 }
 
-static struct task* taskQueue_pull(struct qTask* q){}
+static struct task* taskQueue_pull( qTask* q){}
 
-static void taskQueue_deleteAll(struct qTask* q){
+static void taskQueue_deleteAll( qTask* q){
     taskQueue_clear(q);
     pthread_mutex_destroy(&q->qlock);
 }

@@ -11,34 +11,34 @@
 #include <pthread.h>
 #include <sys/prctl.h>
 
-using namespace std;
 
-struct task{
+
+typedef struct task{
     void*(*f)(void*);
     void* arg;
     struct task* next;
-};
+}task;
 
-struct qTask{
+typedef struct qTask{
     pthread_mutex_t qlock;
-    task *start;
-    task *end;
+    struct task *start;
+    struct task *end;
     int lenght;
-};
+}qTask;
 
-struct ThreadPoolManager{
+typedef struct ThreadPoolManager{
     pthread_t* threads;
     pthread_mutex_t plock;
     pthread_cond_t pcond;
     int numOfCurrThreads;
     int totalThreads;
     int* sockets;
-    qTask Q;
-};
+    struct qTask Q;
+}ThreadPoolManager;
 
 int ThreadPoolInit(struct ThreadPoolManager* t, int n);
 void ThreadPoolDestroy(struct ThreadPoolManager* t);
-int ThreadPoolInsertTask(struct ThreadPoolManager* t, struct Task* task);
+int ThreadPoolInsertTask(struct ThreadPoolManager* t, task* task);
 
 static int taskQueue_init(qTask*);
 static void taskQueue_clear(qTask*);
