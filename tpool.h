@@ -33,7 +33,7 @@ typedef struct ThreadPoolManager{
     int numOfCurrThreads;
     int totalThreads;
     int* sockets;
-    struct qTask Q;
+    struct qTask taskQueue;
 }ThreadPoolManager;
 
 int ThreadPoolInit(struct ThreadPoolManager* t, int n);
@@ -43,7 +43,7 @@ int ThreadPoolInsertTask(struct ThreadPoolManager* t, task* task);
 static int taskQueue_init(qTask*);
 static void taskQueue_clear(qTask*);
 static void taskQueue_push(qTask*, task*);
-static struct task* taskQueue_pull(qTask*);
+static struct task* taskQueue_pop(qTask*);
 static void taskQueue_deleteAll(qTask*);
 static void* threadPoolCheck(void* threadPool);
 
