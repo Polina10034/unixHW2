@@ -39,7 +39,7 @@ void ThreadPoolDestroy(ThreadPoolManager* t){
 
     taskQueue_deleteAll(&t->taskQueue);
     for(int n=0; n < numOfThrds; n++){
-        pthread_cancel(&t->threads[n]);
+        pthread_cancel(t->threads[n]);
     }
 
     free(t->threads);
@@ -48,7 +48,23 @@ void ThreadPoolDestroy(ThreadPoolManager* t){
 
 }
 
-int ThreadPoolInsertTask(ThreadPoolManager* t, task* task){}
+int ThreadPoolInsertTask(ThreadPoolManager* t, task* tasktoAdd){
+    task* new_task;
+    new_task = (struct task*)malloc(sizeof(struct task));
+    if(new_task == NULL){
+        perror("Faild allocating memory to new task.\n");
+        return -1;
+    }
+
+    new_task->arg = tasktoAdd->arg;
+    new_task->f = tasktoAdd->f;
+
+    taskQueue_push(&t->taskQueue, new_task);
+    pthread_cond_signal(&t->pcond);
+
+    printf("Done adding new task.\n");
+    return 0;
+}
 
 static void* threadPoolCheck(void* threadPool){
     ThreadPoolManager* tmp_mr = (ThreadPoolManager*)threadPool;
@@ -93,7 +109,7 @@ static int taskQueue_init(qTask* q){
 }
 static void taskQueue_clear(qTask* q){
     while(q->lenght){
-        free(taskQueue_pull(q));
+        free(taskQueue_pop(q));
     }
 
     q->start = NULL;
@@ -116,6 +132,7 @@ static void taskQueue_push( qTask* q,  task* task){
 
     q->lenght++;
     pthread_mutex_unlock(&q->qlock);
+    
 }
 
 static struct task* taskQueue_pop( qTask* q){
@@ -140,5 +157,9 @@ static struct task* taskQueue_pop( qTask* q){
 static void taskQueue_deleteAll( qTask* q){
     taskQueue_clear(q);
     pthread_mutex_destroy(&q->qlock);
+}
+
+int main(){
+    return 0;
 }
 
