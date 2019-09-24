@@ -32,7 +32,21 @@ int ThreadPoolInit(ThreadPoolManager* t, int n){
     return 0;
 }
 
-void ThreadPoolDestroy(ThreadPoolManager* t){}
+void ThreadPoolDestroy(ThreadPoolManager* t){
+    if(t == NULL)
+        return;
+    int numOfThrds = t->numOfCurrThreads;
+
+    taskQueue_deleteAll(&t->taskQueue);
+    for(int n=0; n < numOfThrds; n++){
+        pthread_cancel(&t->threads[n]);
+    }
+
+    free(t->threads);
+    pthread_mutex_destroy(&t->plock);
+    pthread_cond_destroy(&t->pcond);
+
+}
 
 int ThreadPoolInsertTask(ThreadPoolManager* t, task* task){}
 
