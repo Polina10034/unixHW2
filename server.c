@@ -26,15 +26,14 @@ int main(int argc, char *argv[]){
     srand(time(NULL));
     randNum= rand();
     struct lastGuess* lastGnum;
+    struct ThreadPoolManager tpManager;
+    int reuseaddr = 1;
 
     if( argv[1]  == NULL){
         perror( "Enter number of threads.\n");
         return -1;
     }
 
-    int toatlThreads = strtol(argv[1], NULL, 10);
-
-	
     struct sockaddr_in s = {0};
 	s.sin_family = AF_INET;
 	s.sin_port = htons(PORT);
@@ -44,17 +43,39 @@ int main(int argc, char *argv[]){
 	if (listenS < 0)
 	{
 		perror("socket");
-		return -1;
+		return 1;
 	}
 
+    if(setsockopt(listenS, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(int)) == -1){
+        perror("setsockopt");
+        return 1;
+    }
     if (bind(listenS, (struct sockaddr*)&s, sizeof(s)) < 0)
 	{
 		perror("bind");
-		return -1;
+		return 1;
 	}
 	if (listen(listenS, QUEUE_LEN) < 0)
 	{
 		perror("listen");
-		return -1;
+		return 1;
 	}
+
+    int totalThreads = strtol(argv[1], NULL, 10);
+    lastGnum = malloc(totalThreads * sizeof(struct lastGuess));
+    if(lastGnum == NULL){
+        perror("Faild allocating lastGnum.\n");
+        return -1;
+    }
+
+    /*for(int i=0; i<totalThreads; i++){
+
+    }*/
+
+    if(ThreadPoolInit(&tpManager, totalThreads) == -1){
+        printf("Faild threadPoolInit(). \n");
+        return -1;
+    }
+
+
 }

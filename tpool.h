@@ -47,6 +47,17 @@ static struct task* taskQueue_pop(qTask*);
 static void taskQueue_deleteAll(qTask*);
 static void* threadPoolCheck(void* threadPool);
 
+/*bulls and pigs data*/
 
+struct Game{
+    int bulls;
+    int pigs;
+} game;
+
+struct lastGuess{
+    int threadId;
+    char guess[5];
+    char sNum[5];
+}lastGuess;
 
 #endif
