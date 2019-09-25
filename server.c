@@ -12,8 +12,10 @@
 #include <sys/mman.h>
 #include <sys/select.h>
 #include "tpool.h"
+#include "tpool.c"
 
 void cleanExit() { exit(0); }
+void* gameFunc(void* arg);
 
 #define PORT 0x0da2
 #define IP_ADDR 0x7f000001
@@ -96,7 +98,7 @@ int main(int argc, char *argv[]){
 
     /* commands */
         printf("Please enter one command: list or quit.");
-        if(FD_ISSER(STDIN_FILENO, &readfds)){
+        if(FD_ISSET(STDIN_FILENO, &readfds)){
            
             fgets(command, 15, stdin);
             
@@ -123,7 +125,33 @@ int main(int argc, char *argv[]){
             }
 
         }
+        int newsocket = accept(listenS, (struct sockaddr*)&addr, &size);
+        if(newsocket == -1){
+            perror("accept");
+            return -1;
+        }
         
+        printf("Got a new connection.\n");
 
+        struct task* new_task;
+        /*int* newsocket_p = (int*)malloc(sizeof(int));*/
+        int* nsocketPtr = (int*)malloc(sizeof(int));
+        if (nsocketPtr  == NULL){
+            perror("Falid allocating new_task socket ptr.\n");
+            return -1;
+        }   
+        *nsocketPtr =  newsocket;
+        new_task->arg = (void*)nsocketPtr;
+        new_task->f = gameFunc;
+        ThreadPoolInsertTask(&tpManager, new_task);
+        }
 
-}
+         free(lastGnum);
+         close(listenS);
+         printf("Exiting.\n");
+         return 0;
+    }
+
+    void* gameFunc(void* arg){
+
+    }

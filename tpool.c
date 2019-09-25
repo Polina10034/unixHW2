@@ -159,7 +159,5 @@ static void taskQueue_deleteAll( qTask* q){
     pthread_mutex_destroy(&q->qlock);
 }
 
-int main(){
-    return 0;
-}
+
 
