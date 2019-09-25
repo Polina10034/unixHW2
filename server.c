@@ -10,7 +10,8 @@
 #include <signal.h>
 #include <sys/time.h>
 #include <sys/mman.h>
-#include "tpool.h";
+#include <sys/select.h>
+#include "tpool.h"
 
 void cleanExit() { exit(0); }
 
@@ -28,6 +29,8 @@ int main(int argc, char *argv[]){
     struct lastGuess* lastGnum;
     struct ThreadPoolManager tpManager;
     int reuseaddr = 1;
+    fd_set readfds;
+    char command[15];
 
     if( argv[1]  == NULL){
         perror( "Enter number of threads.\n");
@@ -76,6 +79,51 @@ int main(int argc, char *argv[]){
         printf("Faild threadPoolInit(). \n");
         return -1;
     }
+
+    while(1){
+        struct sockaddr_in addr;
+        socklen_t size = sizeof(struct sockaddr_in);
+        FD_ZERO(&readfds);
+        FD_SET(STDIN_FILENO, &readfds);
+        FD_SET(listenS, &readfds);
+
+        int maxfd = listenS;
+
+        if(select(maxfd + 1, &readfds, NULL, NULL, NULL) < 0){
+            perror("select");
+            return -1;        
+         }
+
+    /* commands */
+        printf("Please enter one command: list or quit.");
+        if(FD_ISSER(STDIN_FILENO, &readfds)){
+           
+            fgets(command, 15, stdin);
+            
+            if(strcmp(command, "list\n") == 0){
+                printf("Listing.\n");
+                for(int i=0; i< totalThreads; i++){
+                    if(lastGnum[i].threadId == 0)
+                        break;
+                    printf("Game %d - Number %s, Last Guess: %s\n", i,lastGnum[i].sNum,lastGnum[i].guess);
+               }
+
+            }
+            else if( strcmp(command, "quit\n") == 0){
+                printf("Quiting...\n");
+                ThreadPoolDestroy(&tpManager);
+                for(int i = 0; i < maxfd; i++){
+                    close(i);
+                }
+                break;
+            }
+
+            else {
+                printf("Renter the command:\n");
+            }
+
+        }
+        
 
 
 }
