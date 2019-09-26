@@ -52,10 +52,10 @@ static void* threadPoolCheck(void* threadPool);
 struct Game{
     int bulls;
     int pigs;
-} game;
+} Game;
 
 struct lastGuess{
-    int threadId;
+    pthread_t threadId;
     char guess[5];
     char sNum[5];
 }lastGuess;

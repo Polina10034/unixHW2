@@ -29,7 +29,7 @@ int ThreadPoolInit(ThreadPoolManager* t, int n){
     }
 
     printf("Successful initialized ThreadPool.\n");
-    return 0;
+    return 1;
 }
 
 void ThreadPoolDestroy(ThreadPoolManager* t){
@@ -49,6 +49,7 @@ void ThreadPoolDestroy(ThreadPoolManager* t){
 }
 
 int ThreadPoolInsertTask(ThreadPoolManager* t, task* tasktoAdd){
+    printf("Adding New task.\n");
     task* new_task;
     new_task = (struct task*)malloc(sizeof(struct task));
     if(new_task == NULL){
