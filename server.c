@@ -178,7 +178,7 @@ printf("Listening for connection.\n");
         srand(time(NULL));
 
         printf("Game # %d starting\n", (int)pthread_self());
-        while(1){
+
         /*creating random number without repeat*/
         
         for(int i =0 ; i < 4 ; i++){
@@ -192,9 +192,8 @@ printf("Listening for connection.\n");
             }
             serverNum[i]= randNum;
         }
-            serverNum[4]= '\0';
-            printf("Server number: %s.\n",serverNum);
-        }
+        serverNum[4]= '\0';
+        printf("Server number: %s.\n",serverNum);
 
         while(1){
             if (recv(newsocket, &clientNum, sizeof(clientNum), 0) < 0)
@@ -207,9 +206,9 @@ printf("Listening for connection.\n");
                 if( lastGnum[i].threadId == 0){
                     lastGnum[i].threadId = pthread_self();
                     strcpy(lastGnum[i].guess, clientNum);
-                            printf("Client num in gues: %s.\n",lastGnum[i].guess);
+                    /*  printf("Client num in gues: %s.\n",lastGnum[i].guess);*/
                     strcpy(lastGnum[i].sNum, serverNum);
-                          printf("Server num in gues: %s.\n",lastGnum[i].sNum);
+                    /*      printf("Server num in gues: %s.\n",lastGnum[i].guess);*/
 
                   }
                 else if(lastGnum[i].threadId == pthread_self()){
@@ -219,7 +218,6 @@ printf("Listening for connection.\n");
               printf("Client number: %s.\n",clientNum);
               sleep(1);
             
-//// until here everything  is working /////
             /*compering numbers*/
 
             for(int i = 0 ;i< 4 ; i++){
