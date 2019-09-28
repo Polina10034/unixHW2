@@ -1,11 +1,11 @@
-OBJS=server.c
+OBJS=server.c tpool.c
 OBJS_CLIENT=client.c
 
 all: $(OBJS) $(OBJS_CLIENT)
 	rm -f server
 	rm -f client
-	gcc -pthread $(OBJS) -o server
-	gcc -pthread $(OBJS_CLIENT) -o client
+	gcc -g -pthread $(OBJS) -lpthread -o server
+	gcc -g -pthread $(OBJS_CLIENT) -lpthread -o client
 	rm -f *.o
 
 clean:

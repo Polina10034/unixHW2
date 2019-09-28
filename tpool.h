@@ -1,51 +1,32 @@
-
-#ifndef TPOOL_H
-#define TPOOL_H
-
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <errno.h>
-#include <time.h>
-#include <pthread.h>
-#include <sys/prctl.h>
-
-
-
 typedef struct task{
-    void*(*f)(void*);
-    void* arg;
+	void*(*f)(void* arg);
+	void* arg;
     struct task* next;
-}task;
+} Task;
 
-typedef struct qTask{
-    pthread_mutex_t qlock;
-    struct task *start;
-    struct task *end;
-    int lenght;
+
+
+typedef struct taskQueue{
+	pthread_mutex_t qlock;
+	Task *start;
+	Task *end;
+	int lenght;
 }qTask;
 
 typedef struct ThreadPoolManager{
-    pthread_t* threads;
-    pthread_mutex_t plock;
-    pthread_cond_t pcond;
-    int numOfCurrThreads;
+	pthread_t* threads;
+	pthread_mutex_t plock;
+	pthread_cond_t pcond;
+	int numOfCurrThreads;
     int totalThreads;
-    int* sockets;
-    struct qTask taskQueue;
+	int* sockets;
+	qTask taskQueue;
 }ThreadPoolManager;
 
-int ThreadPoolInit(struct ThreadPoolManager* t, int n);
-void ThreadPoolDestroy(struct ThreadPoolManager* t);
-int ThreadPoolInsertTask(struct ThreadPoolManager* t, task* task);
+int ThreadPoolInit(ThreadPoolManager* t, int n);
+void ThreadPoolDestroy(ThreadPoolManager* t);
+int ThreadPoolInsertTask(ThreadPoolManager* t, void* (*f_p)(void* arg), void* new_arg);
 
-static int taskQueue_init(qTask*);
-static void taskQueue_clear(qTask*);
-static void taskQueue_push(qTask*, task*);
-static struct task* taskQueue_pop(qTask*);
-static void taskQueue_deleteAll(qTask*);
-static void* threadPoolCheck(void* threadPool);
 
 /*bulls and pigs data*/
 
@@ -54,10 +35,8 @@ struct Game{
     int pigs;
 } Game;
 
-struct lastGuess{
+struct clientNum{
     pthread_t threadId;
-    char guess[5];
-    char sNum[5];
-}lastGuess;
-
-#endif
+    char serverNum[4];
+    char clientNum[4];
+} clientNum;
